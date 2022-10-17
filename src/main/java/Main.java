@@ -17,6 +17,7 @@ public class Main {
     static File binFile = new File("data.bin");
 
 
+
     public static void main(String[] args) {
         try {
             // создаем класс для анализа суммы покупок
@@ -86,14 +87,13 @@ public class Main {
                 .forEach(category -> category.addSale(incomeDate, incomeSum));
 
     }
-
-    static LocalDate incomeDate(String input) throws ParseException {
+    
+    static LocalDate incomeDate (String input) throws ParseException {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy.MM.dd");
         JSONParser parser = new JSONParser();
         JSONObject json = (JSONObject) parser.parse(input);
         String date = (String) json.get("date");
-        return LocalDate.parse(date, dtf);
-
+        return  LocalDate.parse(date, dtf);
     }
 }
 

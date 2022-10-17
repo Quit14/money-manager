@@ -64,6 +64,7 @@ public class ManagerTest {
     }
 
 
+
     @Test
     @DisplayName("Тест: определяем категорию с наибольшей суммой трат (абсол.)")
     void maxCategoryTest() {
