@@ -7,14 +7,16 @@ import org.json.simple.parser.ParseException;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.nio.channels.ScatteringByteChannel;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class Main {
 
     static final File TSVFILE = new File("categories.tsv");
     static File binFile = new File("data.bin");
+
 
 
     public static void main(String[] args) {
@@ -29,7 +31,6 @@ public class Main {
                 categories = manager.categoriesFromBinFile(binFile);
             }
 
-
             try (ServerSocket serverSocket = new ServerSocket(8989)) { // стартуем сервер один(!) раз
                 while (true) { // в цикле(!) принимаем подключения
                     try (Socket socket = serverSocket.accept();
@@ -42,6 +43,9 @@ public class Main {
 
                         //выдаем максимальную сумму трат
                         out.println(manager.maxCategory(categories));
+                        out.println(manager.maxYearCategory(categories, incomeDate(input)));
+                        out.println(manager.maxMothCategory(categories, incomeDate(input)));
+                        out.println(manager.maxDayCategory(categories, incomeDate(input)));
 
                         // записываем данные
                         manager.saveBin(binFile, categories);
@@ -65,14 +69,14 @@ public class Main {
     //метод чтения и добавления данных в каждую категорию
     static void getReguest(String input, HashSet<Category> categories) throws ParseException, java.text.ParseException {
         String incomeProduct;
-        Date incomeDate;
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd");
+        LocalDate incomeDate;
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy.MM.dd");
         Long incomeSum;
         JSONParser parser = new JSONParser();
         JSONObject json = (JSONObject) parser.parse(input);
         incomeProduct = (String) json.get("title");
         String date = (String) json.get("date");
-        incomeDate = sdf.parse(date);
+        incomeDate = LocalDate.parse(date, dtf);
         incomeSum = (Long) json.get("sum");
         if (categories.stream().noneMatch(category -> category.getItems().contains(incomeProduct))) {
             categories.stream()
@@ -82,6 +86,15 @@ public class Main {
         categories.stream()
                 .filter(category -> category.getItems().contains(incomeProduct))
                 .forEach(category -> category.addSale(incomeDate, incomeSum));
+
+    }
+
+    static LocalDate incomeDate (String input) throws ParseException {
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy.MM.dd");
+        JSONParser parser = new JSONParser();
+        JSONObject json = (JSONObject) parser.parse(input);
+        String date = (String) json.get("date");
+        return  LocalDate.parse(date, dtf);
 
     }
 }

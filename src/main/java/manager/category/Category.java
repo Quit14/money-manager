@@ -1,14 +1,15 @@
 package manager.category;
 
 import java.io.*;
+import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.util.*;
-import java.util.function.ToLongFunction;
 
 public class Category implements Serializable {
 
     private String type;
     private List<String> items; // товары, входящие в категорию
-    private HashMap<Date, Long> buyingLog; // связка "дата - сумма покупки"
+    private HashMap<LocalDate, Long> buyingLog; // связка "дата - сумма покупки"
 
     public Category(String type, List<String> items) {
         this.type = type;
@@ -24,12 +25,12 @@ public class Category implements Serializable {
         return items;
     }
 
-    public HashMap<Date, Long> getBuyingLog() {
+    public HashMap<LocalDate, Long> getBuyingLog() {
         return buyingLog;
     }
 
     //метод добавления даты и суммы покупки
-    public void addSale(Date date, Long sum) {
+    public void addSale(LocalDate date, Long sum) {
         //если в один день покупок несколько
         if (buyingLog.containsKey(date)) {
             Long currentSum = buyingLog.get(date) + sum;
@@ -43,13 +44,43 @@ public class Category implements Serializable {
 
     // подсчет общей суммы покупок в категории
     public long totalSum() {
-        return buyingLog.values().stream().mapToLong(l -> l).sum();
+        if (!buyingLog.isEmpty()) {
+            return buyingLog.values().stream().mapToLong(l -> l).sum();
+        }
+        return 0;
     }
 
-    // TODO: 12.10.2022 метод для подсчета самой большой покупки
-    // TODO: 12.10.2022 метод для подсчета суммы за год
-    // TODO: 12.10.2022 расчет суммы за месяц
-    // TODO: 12.10.2022 расчет суммы за день
+    //подсчет суммы за год
+    public long totalYearSum(LocalDate day) {
+        if (!buyingLog.isEmpty()) {
+            LocalDate yearAgo = day.minusYears(1);
+            return buyingLog.entrySet().stream()
+                    .filter(date -> date.getKey().isAfter(yearAgo))
+                    .filter(date -> date.getKey().isBefore(yearAgo))
+                    .mapToLong(value -> value.getValue()).sum();
+        }
+        return 0;
+    }
+
+    // подсчет суммы за месяц
+    public long totalMothSum(LocalDate day) {
+        if (!buyingLog.isEmpty()) {
+            LocalDate mothAgo = day.minusMonths(1);
+            return buyingLog.entrySet().stream()
+                    .filter(date -> date.getKey().isAfter(mothAgo))
+                    .filter(date -> date.getKey().isBefore(mothAgo))
+                    .mapToLong(value -> value.getValue()).sum();
+        }
+        return 0;
+    }
+
+    // подсчет суммы за день
+    public long totalDaySum(LocalDate day) {
+        if (!buyingLog.isEmpty()) {
+            return buyingLog.get(day);
+        }
+        return 0;
+    }
 
 }
 
