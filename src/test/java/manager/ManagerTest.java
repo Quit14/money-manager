@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -25,14 +26,14 @@ public class ManagerTest {
         List<String> studies = new ArrayList<>();
         studies.add("книги");
         Category cat1 = new Category("учеба", studies);
-        Date date1 = new Date(20220510);
+        LocalDate date1 = LocalDate.of(2022,05,10);
         cat1.addSale(date1, 500L);
 
         //Создаем вторую категорию
         List<String> home = new ArrayList<>();
         studies.add("посуда");
         Category cat2 = new Category("дом", home);
-        Date date2 = new Date(20201010);
+        LocalDate date2 = LocalDate.of(2020,10,10);
         cat2.addSale(date2, 3999L);
 
         HashSet<Category> testCat = new HashSet<>();

@@ -23,6 +23,9 @@ public class Client {
                 String message = scanner.nextLine();
                 out.println(message);
                 System.out.println(in.readLine());
+                System.out.println(in.readLine());
+                System.out.println(in.readLine());
+                System.out.println(in.readLine());
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

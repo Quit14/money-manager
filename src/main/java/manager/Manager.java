@@ -1,9 +1,9 @@
 package manager;
 
 import manager.category.Category;
-import org.json.simple.JSONObject;
 
 import java.io.*;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -28,9 +28,8 @@ public class Manager {
         }
     }
 
+    //  определяем категорию с наибольшей абсолютной суммой трат:
     public String maxCategory(HashSet<Category> categories) {
-
-        // определяем категорию с наибольшей абсолютной суммой трат
         List<Category> comparableCategories = categories.stream()
                 .sorted(comparatorMaxSum)
                 .collect(Collectors.toList());
@@ -46,10 +45,53 @@ public class Manager {
 //        message.put("maxCategory", obj);
 //        return message.toJSONString();
 
-        String message = "{\"maxCategory\": {\"category\":\""
+        return "{\"maxCategory\": {\"category\":\""
                 + maxCategory.getType()
                 + "\",\"sum\":" + maxCategory.totalSum() + "}}";
-        return message;
+    }
+
+    // категория с наибольшими тратами за год:
+    public String maxYearCategory(HashSet<Category> categories, LocalDate day) {
+        Category maxCategory = null;
+        long maxSum = Integer.MIN_VALUE;
+        for (Category cat : categories) {
+            if (cat.totalYearSum(day) > maxSum) {
+                maxCategory = cat;
+            }
+        }
+        return "{\"maxYearCategory\": {\"category\":\""
+                + maxCategory.getType()
+                + "\",\"sum\":" + maxCategory.totalYearSum(day) + "}}";
+    }
+
+    // категория с наибольшими тратами за месяц:
+    public String maxMothCategory(HashSet<Category> categories, LocalDate day) {
+        Category maxCategory = null;
+        long maxSum = Integer.MIN_VALUE;
+        for (Category cat : categories) {
+            if (cat.totalMothSum(day) > maxSum) {
+                maxCategory = cat;
+            }
+        }
+        return "{\"maxMothCategory\": {\"category\":\""
+                + maxCategory.getType()
+                + "\",\"sum\":" + maxCategory.totalMothSum(day) + "}}";
+    }
+
+    // категория с наибольшими тратами за день:
+    public String maxDayCategory(HashSet<Category> categories, LocalDate day) {
+        Category maxCategory = null;
+        long maxSum = Integer.MIN_VALUE;
+        for (Category cat : categories) {
+            if (cat.totalDaySum(day) > maxSum) {
+                maxCategory = cat;
+            }
+        }
+
+        return "{\"maxDayCategory\": {\"category\":\""
+                + maxCategory.getType()
+                + "\",\"sum\":" + maxCategory.totalDaySum(day) + "}}";
+
     }
 
     //Сериализация - создание файла
@@ -73,11 +115,17 @@ public class Manager {
     }
 
 
-    //компаратор для сортировки категорий по максимальной абсолютной сумме трат
-    Comparator<Category> comparatorMaxSum = (c1, c2) -> {
-        long sum1 = c1.totalSum();
-        long sum2 = c2.totalSum();
-        return Long.compare(sum1, sum2);
-    };
+//  компаратор для сортировки категорий по максимальной абсолютной сумме трат
+    Comparator<Category> comparatorMaxSum = Comparator.comparing(Category::totalSum);
+//
+//
+//    //компаратор для сортировки категорий по сумме трат в год
+//    Comparator<Category> comparatorMaxYearSum = Comparator.comparing(Category::totalYearSum);
+//
+//    //компаратор для сортировки категорй по сумме трат в месяц
+//    Comparator<Category> comparatorMaxMothSum = Comparator.comparing(Category::totalMothSum);
+
+
+
 }
 

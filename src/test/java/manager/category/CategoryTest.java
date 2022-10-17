@@ -6,6 +6,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -23,9 +24,9 @@ public class CategoryTest {
 
 
     @Test
-    @DisplayName("Несколько покупок в один день")
+    @DisplayName("Добавляем несколько покупок в один день")
     void addSaleTest() {
-        Date date1 = new Date(20221016);
+        LocalDate date1 = LocalDate.of(2022, 4, 20);
         catTest.addSale(date1, 1000L);
         catTest.addSale(date1, 2000L);
         long currentResult = catTest.getBuyingLog().get(date1);
@@ -33,10 +34,10 @@ public class CategoryTest {
     }
 
     @Test
-    @DisplayName("Единственная покупка в день")
+    @DisplayName("Добавляем единственную покупку в день")
     void addSaleTest_singleShop() {
-        Date date1 = new Date(20221016);
-        Date date2 = new Date(20201016);
+        LocalDate date1 = LocalDate.of(2020,10,11);
+        LocalDate date2 = LocalDate.of(2022,10,10);
         catTest.addSale(date1, 1000L);
         catTest.addSale(date2, 4599L);
         long currentResult = catTest.getBuyingLog().get(date1);
@@ -46,9 +47,9 @@ public class CategoryTest {
     @Test
     @DisplayName("Подсчет общей суммы покупок в категории")
     void totalSumTest() {
-        Date date1 = new Date(20221015);
-        Date date2 = new Date(20221016);
-        Date date3 = new Date(20221017);
+        LocalDate date1 = LocalDate.of(2022,10,15);
+        LocalDate date2 = LocalDate.of(2022,10,16);
+        LocalDate date3 = LocalDate.of(2022,10,17);
         catTest.addSale(date1, 100L);
         catTest.addSale(date2, 100L);
         catTest.addSale(date3, 100L);
