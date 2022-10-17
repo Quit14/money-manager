@@ -67,10 +67,12 @@ public class Main {
         incomeDate = sdf.parse(date);
         incomeSum = (Long) json.get("sum");
         if (categories.stream().noneMatch(category -> category.getItems().contains(incomeProduct))) {
-            categories.stream().filter(category -> category.getType().contains("другое"))
+            categories.stream()
+                    .filter(category -> category.getType().contains("другое"))
                     .forEach(category -> category.addSale(incomeDate, incomeSum));
         }
-        categories.stream().filter(category -> category.getItems().contains(incomeProduct))
+        categories.stream()
+                .filter(category -> category.getItems().contains(incomeProduct))
                 .forEach(category -> category.addSale(incomeDate, incomeSum));
 
     }
