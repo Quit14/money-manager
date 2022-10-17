@@ -1,12 +1,10 @@
 package manager.category;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.*;
 import java.util.*;
 import java.util.function.ToLongFunction;
 
-public class Category {
+public class Category implements Serializable {
 
     private String type;
     private List<String> items; // товары, входящие в категорию
@@ -53,23 +51,6 @@ public class Category {
     // TODO: 12.10.2022 расчет суммы за месяц
     // TODO: 12.10.2022 расчет суммы за день
 
-    //Создаем категории на основе списка tsv-файла
-    public static HashSet<Category> createCategories(File file) throws FileNotFoundException {
-        HashMap<String, List<String>> categoriesFromFile = new HashMap<>();
-        categoriesFromFile.put("другое", new ArrayList<>());
-        try (Scanner scanner = new Scanner(new FileInputStream(file))) {
-            while (scanner.hasNextLine()) {
-                String[] txt = scanner.nextLine().split("\t");
-                categoriesFromFile.computeIfAbsent(txt[1], item -> new ArrayList<>()).add(txt[0]);
-            }
-            HashSet<Category> categories = new HashSet<>();
-            List<String> keyList = new ArrayList<>(categoriesFromFile.keySet());
-            for (String key : keyList) {
-                categories.add(new Category(key, categoriesFromFile.get(key)));
-            }
-            return categories;
-        }
-    }
 }
 
 

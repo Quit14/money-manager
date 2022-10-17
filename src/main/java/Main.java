@@ -14,15 +14,20 @@ import java.util.*;
 public class Main {
 
     static final File TSVFILE = new File("categories.tsv");
+    static File binFile = new File("data.bin");
 
 
     public static void main(String[] args) {
         try {
-            // считываем tsv-файл и создаем категории товаров
-            HashSet<Category> categories = Category.createCategories(TSVFILE);
-
             // создаем класс для анализа суммы покупок
             Manager manager = new Manager();
+
+            // считываем tsv-файл и создаем категории товаров
+            HashSet<Category> categories = manager.createCategories(TSVFILE);
+            // считываем предыдущие записи
+            if (binFile.exists()) {
+                categories = manager.categoriesFromBinFile(binFile);
+            }
 
 
             try (ServerSocket serverSocket = new ServerSocket(8989)) { // стартуем сервер один(!) раз
@@ -38,8 +43,11 @@ public class Main {
                         //выдаем максимальную сумму трат
                         out.println(manager.maxCategory(categories));
 
+                        // записываем данные
+                        manager.saveBin(binFile, categories);
                     }
                 }
+
             } catch (IOException e) {
                 System.out.println("Не могу стартовать сервер");
                 e.printStackTrace();
