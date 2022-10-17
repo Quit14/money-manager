@@ -7,7 +7,6 @@ import org.json.simple.parser.ParseException;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -88,14 +87,13 @@ public class Main {
                 .forEach(category -> category.addSale(incomeDate, incomeSum));
 
     }
-
+    
     static LocalDate incomeDate (String input) throws ParseException {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy.MM.dd");
         JSONParser parser = new JSONParser();
         JSONObject json = (JSONObject) parser.parse(input);
         String date = (String) json.get("date");
         return  LocalDate.parse(date, dtf);
-
     }
 }
 

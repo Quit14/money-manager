@@ -57,6 +57,7 @@ public class Manager {
         for (Category cat : categories) {
             if (cat.totalYearSum(day) > maxSum) {
                 maxCategory = cat;
+                maxSum = cat.totalYearSum(day);
             }
         }
         return "{\"maxYearCategory\": {\"category\":\""
@@ -71,6 +72,7 @@ public class Manager {
         for (Category cat : categories) {
             if (cat.totalMothSum(day) > maxSum) {
                 maxCategory = cat;
+                maxSum = cat.totalMothSum(day);
             }
         }
         return "{\"maxMothCategory\": {\"category\":\""
@@ -85,9 +87,9 @@ public class Manager {
         for (Category cat : categories) {
             if (cat.totalDaySum(day) > maxSum) {
                 maxCategory = cat;
+                maxSum = cat.totalDaySum(day);
             }
         }
-
         return "{\"maxDayCategory\": {\"category\":\""
                 + maxCategory.getType()
                 + "\",\"sum\":" + maxCategory.totalDaySum(day) + "}}";
@@ -115,17 +117,8 @@ public class Manager {
     }
 
 
-//  компаратор для сортировки категорий по максимальной абсолютной сумме трат
+    //  компаратор для сортировки категорий по максимальной абсолютной сумме трат
     Comparator<Category> comparatorMaxSum = Comparator.comparing(Category::totalSum);
-//
-//
-//    //компаратор для сортировки категорий по сумме трат в год
-//    Comparator<Category> comparatorMaxYearSum = Comparator.comparing(Category::totalYearSum);
-//
-//    //компаратор для сортировки категорй по сумме трат в месяц
-//    Comparator<Category> comparatorMaxMothSum = Comparator.comparing(Category::totalMothSum);
-
-
 
 }
 

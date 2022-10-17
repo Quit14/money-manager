@@ -52,31 +52,34 @@ public class Category implements Serializable {
 
     //подсчет суммы за год
     public long totalYearSum(LocalDate day) {
-        if (!buyingLog.isEmpty()) {
+        if (buyingLog.containsKey(day)) {
             LocalDate yearAgo = day.minusYears(1);
             return buyingLog.entrySet().stream()
                     .filter(date -> date.getKey().isAfter(yearAgo))
-                    .filter(date -> date.getKey().isBefore(yearAgo))
-                    .mapToLong(value -> value.getValue()).sum();
+                    .filter(date -> date.getKey().isBefore(day))
+                    .mapToLong(value -> value.getValue()).sum()
+                    + totalDaySum(day) + totalDaySum(yearAgo);
         }
         return 0;
     }
 
+
     // подсчет суммы за месяц
     public long totalMothSum(LocalDate day) {
-        if (!buyingLog.isEmpty()) {
+        if (buyingLog.containsKey(day)) {
             LocalDate mothAgo = day.minusMonths(1);
             return buyingLog.entrySet().stream()
                     .filter(date -> date.getKey().isAfter(mothAgo))
-                    .filter(date -> date.getKey().isBefore(mothAgo))
-                    .mapToLong(value -> value.getValue()).sum();
+                    .filter(date -> date.getKey().isBefore(day))
+                    .mapToLong(value -> value.getValue()).sum()
+                    + totalDaySum(day) + totalDaySum(mothAgo);
         }
         return 0;
     }
 
     // подсчет суммы за день
     public long totalDaySum(LocalDate day) {
-        if (!buyingLog.isEmpty()) {
+        if (buyingLog.containsKey(day)) {
             return buyingLog.get(day);
         }
         return 0;
