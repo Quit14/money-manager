@@ -7,7 +7,6 @@ import org.json.simple.parser.ParseException;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -16,7 +15,6 @@ public class Main {
 
     static final File TSVFILE = new File("categories.tsv");
     static File binFile = new File("data.bin");
-
 
 
     public static void main(String[] args) {
@@ -89,12 +87,12 @@ public class Main {
 
     }
 
-    static LocalDate incomeDate (String input) throws ParseException {
+    static LocalDate incomeDate(String input) throws ParseException {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy.MM.dd");
         JSONParser parser = new JSONParser();
         JSONObject json = (JSONObject) parser.parse(input);
         String date = (String) json.get("date");
-        return  LocalDate.parse(date, dtf);
+        return LocalDate.parse(date, dtf);
 
     }
 }
