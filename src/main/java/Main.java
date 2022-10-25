@@ -9,7 +9,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.Set;
 
 public class Main {
 
@@ -24,7 +24,7 @@ public class Main {
             Manager manager = new Manager();
 
             // считываем tsv-файл и создаем категории товаров
-            HashSet<Category> categories = manager.createCategories(TSVFILE);
+            Set<Category> categories = manager.createCategories(TSVFILE);
             // считываем предыдущие записи
             if (binFile.exists()) {
                 categories = manager.categoriesFromBinFile(binFile);
@@ -41,10 +41,8 @@ public class Main {
                         getReguest(input, categories);
 
                         //выдаем максимальную сумму трат
-                        out.println(manager.maxCategory(categories));
-                        out.println(manager.maxYearCategory(categories, incomeDate(input)));
-                        out.println(manager.maxMothCategory(categories, incomeDate(input)));
-                        out.println(manager.maxDayCategory(categories, incomeDate(input)));
+                        System.out.println(manager.printMaxCategories(categories, incomeDate(input)));
+                        out.println(manager.printMaxCategories(categories, incomeDate(input)));
 
                         // записываем данные
                         manager.saveBin(binFile, categories);
@@ -66,7 +64,7 @@ public class Main {
 
 
     //метод чтения и добавления данных в каждую категорию
-    static void getReguest(String input, HashSet<Category> categories) throws ParseException, java.text.ParseException {
+    static void getReguest(String input, Set<Category> categories) throws ParseException, java.text.ParseException {
         String incomeProduct;
         LocalDate incomeDate;
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy.MM.dd");

@@ -1,26 +1,21 @@
 package manager;
 
-import manager.Manager;
 import manager.category.Category;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
+
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 
 public class ManagerTest {
     private Manager manager = new Manager();
     private Category catTest1;
     private Category catTest2;
-    private HashSet<Category> testCat = new HashSet<>();
+    private Set<Category> testCat = new HashSet<>();
 
     //Даты
     private LocalDate date1 = LocalDate.of(2022, 10, 10);
@@ -68,21 +63,22 @@ public class ManagerTest {
     @Test
     @DisplayName("Тест: определяем категорию с наибольшей суммой трат (абсол.)")
     void maxCategoryTest() {
-        String result = "{\"maxCategory\": {\"category\":\"дом\",\"sum\":7750}}";
+        String result = "{\n  \"category\": \"дом\",\n  \"sum\": 7750\n}";
         Assertions.assertEquals(result, manager.maxCategory(testCat));
     }
 
     @Test
     @DisplayName("Наибольшая сумма трат за год")
     void maxYearCategoryTest() {
-        String result = "{\"maxYearCategory\": {\"category\":\"дом\",\"sum\":1450}}";
+        String result = "{\n  \"category\": \"дом\",\n  \"sum\": 1450\n}";
         Assertions.assertEquals(result, manager.maxYearCategory(testCat,date3));
     }
+
 
     @Test
     @DisplayName("Наибольшая сумма трат за месяц")
     void maxMothCategoryTest() {
-        String result = "{\"maxMothCategory\": {\"category\":\"учеба\",\"sum\":700}}";
+        String result = "{\n  \"category\": \"учеба\",\n  \"sum\": 700\n}";
         Assertions.assertEquals(result, manager.maxMothCategory(testCat,mothAfter));
     }
 }

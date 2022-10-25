@@ -22,10 +22,10 @@ public class Client {
                 System.out.println("Введите транзакцию:");
                 String message = scanner.nextLine();
                 out.println(message);
-                System.out.println(in.readLine());
-                System.out.println(in.readLine());
-                System.out.println(in.readLine());
-                System.out.println(in.readLine());
+                String read;
+                while((read = in.readLine()) != null){
+                    System.out.println(read);
+                }
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

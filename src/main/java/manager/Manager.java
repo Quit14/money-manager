@@ -1,5 +1,8 @@
 package manager;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonParser;
 import manager.category.Category;
 
 import java.io.*;
@@ -9,9 +12,10 @@ import java.util.stream.Collectors;
 
 
 public class Manager {
+    Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
     //Создаем категории на основе списка tsv-файла
-    public HashSet<Category> createCategories(File file) throws FileNotFoundException {
+    public Set<Category> createCategories(File file) throws FileNotFoundException {
         HashMap<String, List<String>> categoriesFromFile = new HashMap<>();
         categoriesFromFile.put("другое", new ArrayList<>());
         try (Scanner scanner = new Scanner(new FileInputStream(file))) {
@@ -19,7 +23,7 @@ public class Manager {
                 String[] txt = scanner.nextLine().split("\t");
                 categoriesFromFile.computeIfAbsent(txt[1], item -> new ArrayList<>()).add(txt[0]);
             }
-            HashSet<Category> categories = new HashSet<>();
+            Set<Category> categories = new HashSet<>();
             List<String> keyList = new ArrayList<>(categoriesFromFile.keySet());
             for (String key : keyList) {
                 categories.add(new Category(key, categoriesFromFile.get(key)));
@@ -28,30 +32,27 @@ public class Manager {
         }
     }
 
+    private class maxValue {
+        String category;
+        long sum;
+
+        public maxValue(String category, long sum) {
+            this.category = category;
+            this.sum = sum;
+        }
+    }
+
     //  определяем категорию с наибольшей абсолютной суммой трат:
-    public String maxCategory(HashSet<Category> categories) {
+    protected String maxCategory(Set<Category> categories) {
         List<Category> comparableCategories = categories.stream()
                 .sorted(comparatorMaxSum)
                 .collect(Collectors.toList());
         Category maxCategory = comparableCategories.get(comparableCategories.size() - 1);
-
-        //имеет ли принципиальное значение порядок ключ-значение в ответе сервера?
-
-//        // создаем json-объект
-//        JSONObject obj = new JSONObject();
-//        obj.put("category", maxCategory.getType());
-//        obj.put("sum", maxCategory.totalSum());
-//        JSONObject message = new JSONObject();
-//        message.put("maxCategory", obj);
-//        return message.toJSONString();
-
-        return "{\"maxCategory\": {\"category\":\""
-                + maxCategory.getType()
-                + "\",\"sum\":" + maxCategory.totalSum() + "}}";
+        return gson.toJson(new maxValue(maxCategory.getType(), maxCategory.totalSum()));
     }
 
     // категория с наибольшими тратами за год:
-    public String maxYearCategory(HashSet<Category> categories, LocalDate day) {
+    protected String maxYearCategory(Set<Category> categories, LocalDate day) {
         Category maxCategory = null;
         long maxSum = Integer.MIN_VALUE;
         for (Category cat : categories) {
@@ -60,13 +61,12 @@ public class Manager {
                 maxSum = cat.totalYearSum(day);
             }
         }
-        return "{\"maxYearCategory\": {\"category\":\""
-                + maxCategory.getType()
-                + "\",\"sum\":" + maxCategory.totalYearSum(day) + "}}";
+        return gson.toJson(new maxValue(maxCategory.getType(), maxSum));
     }
 
+
     // категория с наибольшими тратами за месяц:
-    public String maxMothCategory(HashSet<Category> categories, LocalDate day) {
+    protected String maxMothCategory(Set<Category> categories, LocalDate day) {
         Category maxCategory = null;
         long maxSum = Integer.MIN_VALUE;
         for (Category cat : categories) {
@@ -75,13 +75,11 @@ public class Manager {
                 maxSum = cat.totalMothSum(day);
             }
         }
-        return "{\"maxMothCategory\": {\"category\":\""
-                + maxCategory.getType()
-                + "\",\"sum\":" + maxCategory.totalMothSum(day) + "}}";
+        return gson.toJson(new maxValue(maxCategory.getType(), maxSum));
     }
 
     // категория с наибольшими тратами за день:
-    public String maxDayCategory(HashSet<Category> categories, LocalDate day) {
+    private String maxDayCategory(Set<Category> categories, LocalDate day) {
         Category maxCategory = null;
         long maxSum = Integer.MIN_VALUE;
         for (Category cat : categories) {
@@ -90,21 +88,29 @@ public class Manager {
                 maxSum = cat.totalDaySum(day);
             }
         }
-        return "{\"maxDayCategory\": {\"category\":\""
-                + maxCategory.getType()
-                + "\",\"sum\":" + maxCategory.totalDaySum(day) + "}}";
+        return gson.toJson(new maxValue(maxCategory.getType(), maxSum));
 
     }
 
+    public String printMaxCategories(Set<Category> categories, LocalDate day) {
+        Map<String, String> maxCategories = new LinkedHashMap<>();
+        maxCategories.put("maxCategory", maxCategory(categories));
+        maxCategories.put("maxYearCategory", maxYearCategory(categories, day));
+        maxCategories.put("maxMonthCategory", maxMothCategory(categories, day));
+        maxCategories.put("maxDayCategory", maxDayCategory(categories, day));
+
+        return gson.toJson(maxCategories);
+    }
+
     //Сериализация - создание файла
-    public void saveBin(File file, HashSet<Category> categories) throws IOException {
+    public void saveBin(File file, Set<Category> categories) throws IOException {
         try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(file))) {
             out.writeObject(categories);
         }
     }
 
     // Десериализация - восстановление корзины
-    public HashSet<Category> categoriesFromBinFile(File file) {
+    public Set<Category> categoriesFromBinFile(File file) {
         HashSet<Category> categories = null;
         try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(file))) {
             categories = (HashSet<Category>) in.readObject();
