@@ -2,7 +2,6 @@ package manager;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonParser;
 import manager.category.Category;
 
 import java.io.*;
@@ -32,68 +31,81 @@ public class Manager {
         }
     }
 
-    private class maxValue {
+    protected static class MaxCategory {
         String category;
         long sum;
 
-        public maxValue(String category, long sum) {
+        public MaxCategory(String category, long sum) {
             this.category = category;
             this.sum = sum;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            MaxCategory that = (MaxCategory) o;
+            return sum == that.sum && Objects.equals(category, that.category);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(category, sum);
         }
     }
 
     //  определяем категорию с наибольшей абсолютной суммой трат:
-    protected String maxCategory(Set<Category> categories) {
+    protected MaxCategory maxCategory (Set<Category> categories) {
         List<Category> comparableCategories = categories.stream()
                 .sorted(comparatorMaxSum)
                 .collect(Collectors.toList());
-        Category maxCategory = comparableCategories.get(comparableCategories.size() - 1);
-        return gson.toJson(new maxValue(maxCategory.getType(), maxCategory.totalSum()));
+        Category maxCategoryValue = comparableCategories.get(comparableCategories.size() - 1);
+        return new MaxCategory(maxCategoryValue.getType(), maxCategoryValue.totalSum());
     }
 
     // категория с наибольшими тратами за год:
-    protected String maxYearCategory(Set<Category> categories, LocalDate day) {
-        Category maxCategory = null;
+    protected MaxCategory maxYearCategory(Set<Category> categories, LocalDate day) {
+        Category maxYearCategory = null;
         long maxSum = Integer.MIN_VALUE;
         for (Category cat : categories) {
             if (cat.totalYearSum(day) > maxSum) {
-                maxCategory = cat;
+                maxYearCategory = cat;
                 maxSum = cat.totalYearSum(day);
             }
         }
-        return gson.toJson(new maxValue(maxCategory.getType(), maxSum));
+        return new MaxCategory(maxYearCategory.getType(), maxSum);
     }
 
 
     // категория с наибольшими тратами за месяц:
-    protected String maxMothCategory(Set<Category> categories, LocalDate day) {
-        Category maxCategory = null;
+    protected MaxCategory maxMothCategory(Set<Category> categories, LocalDate day) {
+        Category maxMothCategory = null;
         long maxSum = Integer.MIN_VALUE;
         for (Category cat : categories) {
             if (cat.totalMothSum(day) > maxSum) {
-                maxCategory = cat;
+                maxMothCategory = cat;
                 maxSum = cat.totalMothSum(day);
             }
         }
-        return gson.toJson(new maxValue(maxCategory.getType(), maxSum));
+        return new MaxCategory(maxMothCategory.getType(), maxSum);
     }
 
     // категория с наибольшими тратами за день:
-    private String maxDayCategory(Set<Category> categories, LocalDate day) {
-        Category maxCategory = null;
+    protected MaxCategory maxDayCategory(Set<Category> categories, LocalDate day) {
+        Category maxDayCategory = null;
         long maxSum = Integer.MIN_VALUE;
         for (Category cat : categories) {
             if (cat.totalDaySum(day) > maxSum) {
-                maxCategory = cat;
+                maxDayCategory = cat;
                 maxSum = cat.totalDaySum(day);
             }
         }
-        return gson.toJson(new maxValue(maxCategory.getType(), maxSum));
+        return new MaxCategory (maxDayCategory.getType(), maxSum);
 
     }
 
     public String printMaxCategories(Set<Category> categories, LocalDate day) {
-        Map<String, String> maxCategories = new LinkedHashMap<>();
+        Map<String, MaxCategory> maxCategories = new LinkedHashMap<>();
         maxCategories.put("maxCategory", maxCategory(categories));
         maxCategories.put("maxYearCategory", maxYearCategory(categories, day));
         maxCategories.put("maxMonthCategory", maxMothCategory(categories, day));
@@ -125,6 +137,7 @@ public class Manager {
 
     //  компаратор для сортировки категорий по максимальной абсолютной сумме трат
     Comparator<Category> comparatorMaxSum = Comparator.comparing(Category::totalSum);
+
 
 }
 

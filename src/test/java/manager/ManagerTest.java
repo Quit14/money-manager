@@ -1,5 +1,6 @@
 package manager;
 
+import com.google.gson.Gson;
 import manager.category.Category;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,6 +17,7 @@ public class ManagerTest {
     private Category catTest1;
     private Category catTest2;
     private Set<Category> testCat = new HashSet<>();
+    Gson gson = new Gson();
 
     //Даты
     private LocalDate date1 = LocalDate.of(2022, 10, 10);
@@ -28,6 +30,7 @@ public class ManagerTest {
 
     @BeforeEach
     void setUp(){
+
         //Создаем одну категорию
         List<String> studies = new ArrayList<>();
         studies.add("книги");
@@ -63,14 +66,14 @@ public class ManagerTest {
     @Test
     @DisplayName("Тест: определяем категорию с наибольшей суммой трат (абсол.)")
     void maxCategoryTest() {
-        String result = "{\n  \"category\": \"дом\",\n  \"sum\": 7750\n}";
+        Manager.MaxCategory result = new Manager.MaxCategory("дом",7750);
         Assertions.assertEquals(result, manager.maxCategory(testCat));
     }
 
     @Test
     @DisplayName("Наибольшая сумма трат за год")
     void maxYearCategoryTest() {
-        String result = "{\n  \"category\": \"дом\",\n  \"sum\": 1450\n}";
+        Manager.MaxCategory result = new Manager.MaxCategory("дом", 1450);
         Assertions.assertEquals(result, manager.maxYearCategory(testCat,date3));
     }
 
@@ -78,7 +81,7 @@ public class ManagerTest {
     @Test
     @DisplayName("Наибольшая сумма трат за месяц")
     void maxMothCategoryTest() {
-        String result = "{\n  \"category\": \"учеба\",\n  \"sum\": 700\n}";
+        Manager.MaxCategory result = new Manager.MaxCategory("учеба", 700);
         Assertions.assertEquals(result, manager.maxMothCategory(testCat,mothAfter));
     }
 }
